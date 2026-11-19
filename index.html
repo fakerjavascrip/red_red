@@ -278,41 +278,41 @@ footer{
   .keyword strong{font-size:17px}
   .keyword .en{font-size:10px}
 }
-\n/* 第二页：使用红色唱片原图实现真实可用的播放控件 */
+/* 第二页：使用红色唱片原图实现真实可用的播放控件 */
 .music-panel{margin-top:42px;padding:30px 12px 24px;background:linear-gradient(145deg,#fffaf1bd,#eddfc8a8);border-top:3px solid var(--gold);text-align:center;color:var(--ink)}
 .music-panel h2{margin:6px 0;color:var(--red);font-size:27px;letter-spacing:4px}
 .music-panel .en{color:#94734c}
 .opera-player{position:relative;width:min(100%,510px);margin:2px auto 0;aspect-ratio:1024/1535;isolation:isolate}
 #music{display:none}
-.opera-player-img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
-/* Hide the image's fixed sample time stamps with matching cream patches. */
+.opera-player-img{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-select:none}
 .music-time{position:absolute;top:66.05%;z-index:2;padding:0 4px;background:#ffebca;color:#231c15;line-height:1.25;font:clamp(11px,2.6vw,17px) Georgia,serif;font-variant-numeric:tabular-nums}
 .music-time.current{left:12.4%}.music-time.total{right:11.7%}
 .music-progress{position:absolute;z-index:4;top:63.6%;left:12.4%;width:75%;height:2.3%;margin:0;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,#d9a022 0%,#d9a022 var(--played,0%),#e0bd82 var(--played,0%),#e0bd82 100%);border:1px solid #a87429;border-radius:30px;cursor:pointer;touch-action:none}
 .music-progress::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#c31916;border:4px solid #ffe9aa;box-shadow:0 0 0 2px #b77a25;border-radius:50%}
 .music-progress::-moz-range-thumb{width:13px;height:13px;background:#c31916;border:4px solid #ffe9aa;box-shadow:0 0 0 2px #b77a25;border-radius:50%}
-.player-hit{position:absolute;z-index:5;border:0;background:transparent;border-radius:50%;cursor:pointer;touch-action:manipulation}
+.player-hit{position:absolute;z-index:5;border:0;padding:0;margin:0;background:transparent;border-radius:50%;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:rgba(203,35,32,.18);appearance:none;-webkit-appearance:none}
+.player-hit::before{content:"";position:absolute;inset:0;border-radius:50%;background:rgba(255,255,255,0.01)}
 .player-hit:focus-visible{outline:3px solid #cb2320;outline-offset:2px}
 .player-prev{left:26.5%;top:70.1%;width:11.5%;height:7.6%}
 .player-next{left:64.5%;top:70.1%;width:11.5%;height:7.6%}
 .player-main{left:41%;top:67.5%;width:19.3%;height:13.3%;display:grid;place-items:center}
-.player-main .pause-icon{display:none;position:relative;width:66%;height:66%;border-radius:50%;background:#ffbf16;color:white;box-shadow:0 0 0 2px #e6a124}
+.player-main .pause-icon{display:none;position:relative;z-index:1;width:66%;height:66%;border-radius:50%;background:#ffbf16;color:white;box-shadow:0 0 0 2px #e6a124;pointer-events:none}
 .player-main .pause-icon::after{content:'Ⅱ';position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font:bold clamp(22px,5vw,39px) Arial,sans-serif}
 .opera-player.is-playing .pause-icon{display:block}
+.opera-player.is-loading .player-main{opacity:.72}
 .player-state{font-size:14px;color:#805729;min-height:1.5em;margin:8px 0 0}
 .player-note{font:11px Georgia,serif;color:#9e8569;letter-spacing:1.5px;margin-top:8px}
 .player-error{display:none;max-width:450px;margin:10px auto 0;color:#8d241f;font-size:12px}
 .player-error.show{display:block}
-/* Phone browsers often do not render PDF embeds; display a rasterization of the same PDF instead. */
 .poster-fallback{display:none;width:100%;height:auto;border:3px solid #c7aa78}
 @media(max-width:700px){.poster{display:none}.poster-fallback{display:block}.music-panel{padding:24px 0}.music-time{top:66.2%}.music-progress::-webkit-slider-thumb{width:16px;height:16px}}
 
 .music-progress,.music-time,.player-prev,.player-next{display:none!important}
 .opera-player{aspect-ratio:1024/1535}
-.player-main{left:39%;top:64.1%;width:22%;height:15.1%}
+.player-main{left:36.5%;top:62.8%;width:27%;height:18%;z-index:6}
 .player-main .pause-icon{background:#d60d0a;box-shadow:0 0 0 2px #e5a32c}
 .character-art img{mix-blend-mode:normal}
-@media(max-width:700px){.player-main{left:39%;top:64.1%;width:22%;height:15.1%}}
+@media(max-width:700px){.player-main{left:36.5%;top:62.8%;width:27%;height:18%}}
 </style>
 </head>
 
@@ -447,12 +447,13 @@ footer{
         <input id="musicProgress" class="music-progress" type="range" min="0" max="1000" value="0" aria-label="拖动音乐进度">
         <span class="music-time current" id="currentTime">00:00</span>
         <span class="music-time total" id="durationTime">00:00</span>
-        <button type="button" class="player-hit player-prev" onclick="seekMusic(-10)" aria-label="后退10秒"></button>
-        <button type="button" class="player-hit player-main" id="playPause" onclick="toggleMusic()" aria-label="播放音乐"><span class="pause-icon" aria-hidden="true"></span></button>
-        <button type="button" class="player-hit player-next" onclick="seekMusic(10)" aria-label="前进10秒"></button>
+        <button type="button" class="player-hit player-prev" id="seekPrev" aria-label="后退10秒"></button>
+        <button type="button" class="player-hit player-main" id="playPause" aria-label="播放音乐"><span class="pause-icon" aria-hidden="true"></span></button>
+        <button type="button" class="player-hit player-next" id="seekNext" aria-label="前进10秒"></button>
       </div>
-      <audio id="music" preload="metadata">
+      <audio id="music" preload="auto" playsinline webkit-playsinline x-webkit-airplay="allow">
         <source src="./guanyu.mp3" type="audio/mpeg">
+        <source src="./关羽.wav" type="audio/wav">
       </audio>
       <p class="player-state" id="status" aria-live="polite">点击播放按钮，聆听关羽戏韵</p>
       <p class="player-note">TAP TO PLAY / PAUSE</p>
@@ -481,14 +482,41 @@ const home = document.getElementById('home');
 const detail = document.getElementById('detail');
 const audio = document.getElementById('music');
 const player = document.getElementById('operaPlayer');
-const progress = {value:0,style:{setProperty(){}}};
-const currentTimeEl = {textContent:''};
-const durationEl = {textContent:''};
+const progress = document.getElementById('musicProgress');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('durationTime');
 const statusText = document.getElementById('status');
 const errorText = document.getElementById('playerError');
 const playPause = document.getElementById('playPause');
+const seekPrev = document.getElementById('seekPrev');
+const seekNext = document.getElementById('seekNext');
+let audioUnlocked = false;
+let playRequestId = 0;
+
+function unlockAudio(){
+  if(audioUnlocked) return;
+  try{
+    audio.muted = false;
+    audio.volume = 1;
+    const p = audio.play();
+    if(p && typeof p.then === 'function'){
+      p.then(function(){
+        audio.pause();
+        audio.currentTime = 0;
+        audioUnlocked = true;
+      }).catch(function(){
+        /* iOS may reject until a later play tap; ignore unlock failure */
+      });
+    }else{
+      audio.pause();
+      audio.currentTime = 0;
+      audioUnlocked = true;
+    }
+  }catch(err){}
+}
 
 function showDetail(){
+  unlockAudio();
   home.classList.remove('active');
   detail.classList.add('active');
   if(location.hash !== '#guanyu') history.replaceState(null,'','#guanyu');
@@ -496,6 +524,7 @@ function showDetail(){
 }
 function showHome(){
   audio.pause();
+  player.classList.remove('is-playing','is-loading');
   detail.classList.remove('active');
   home.classList.add('active');
   if(location.hash) history.replaceState(null,'',location.pathname+location.search);
@@ -506,62 +535,127 @@ function timeLabel(t){
   return String(Math.floor(t/60)).padStart(2,'0')+':'+String(Math.floor(t%60)).padStart(2,'0');
 }
 function refreshProgress(){
-  const duration=audio.duration;
-  currentTimeEl.textContent=timeLabel(audio.currentTime);
-  durationEl.textContent=timeLabel(duration);
-  if(Number.isFinite(duration)&&duration>0){
-    const p=audio.currentTime/duration;
-    progress.value=Math.round(p*1000);
-    progress.style.setProperty('--played',(p*100).toFixed(2)+'%');
+  if(!progress || !currentTimeEl || !durationEl) return;
+  const duration = audio.duration;
+  currentTimeEl.textContent = timeLabel(audio.currentTime);
+  durationEl.textContent = timeLabel(duration);
+  if(Number.isFinite(duration) && duration > 0){
+    const p = audio.currentTime / duration;
+    progress.value = Math.round(p * 1000);
+    progress.style.setProperty('--played', (p * 100).toFixed(2) + '%');
   }
 }
-async function toggleMusic(){
-  if(!audio.paused){audio.pause();return;}
-  try {
-    errorText.classList.remove('show');
-    audio.muted=false;
-    audio.volume=1;
-    await audio.play();
-  }catch(err){
-    statusText.textContent='无法播放，请检查文件或浏览器的音频权限';
-    errorText.classList.add('show');
-    console.error('Audio playback error:',err);
+function setPlayingUI(playing){
+  player.classList.toggle('is-playing', playing);
+  playPause.setAttribute('aria-label', playing ? '暂停音乐' : '播放音乐');
+}
+function toggleMusic(event){
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
   }
+  if(!audio.paused){
+    audio.pause();
+    return false;
+  }
+  errorText.classList.remove('show');
+  player.classList.add('is-loading');
+  statusText.textContent = '正在加载音频…';
+  audio.muted = false;
+  audio.volume = 1;
+  if(audio.readyState < 2){
+    try{ audio.load(); }catch(err){}
+  }
+  const requestId = ++playRequestId;
+  const playPromise = audio.play();
+  if(playPromise && typeof playPromise.then === 'function'){
+    playPromise.then(function(){
+      if(requestId !== playRequestId) return;
+      audioUnlocked = true;
+      player.classList.remove('is-loading');
+      setPlayingUI(true);
+      statusText.textContent = '正在播放 · 关羽戏曲音频';
+    }).catch(function(err){
+      if(requestId !== playRequestId) return;
+      player.classList.remove('is-loading');
+      setPlayingUI(false);
+      statusText.textContent = '无法播放，请再点一次播放，或检查静音开关';
+      errorText.classList.add('show');
+      console.error('Audio playback error:', err);
+    });
+  }else{
+    player.classList.remove('is-loading');
+  }
+  return false;
 }
 function seekMusic(seconds){
   if(!Number.isFinite(audio.duration)) return;
-  audio.currentTime=Math.max(0,Math.min(audio.duration,audio.currentTime+seconds));
+  audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
 }
-progress.addEventListener('input',()=>{
-  if(Number.isFinite(audio.duration)&&audio.duration>0){
-    audio.currentTime=Number(progress.value)/1000*audio.duration;
-    refreshProgress();
+function bindTap(el, handler){
+  if(!el) return;
+  let touched = false;
+  el.addEventListener('touchend', function(e){
+    touched = true;
+    handler(e);
+  }, {passive:false});
+  el.addEventListener('click', function(e){
+    if(touched){
+      touched = false;
+      e.preventDefault();
+      return;
+    }
+    handler(e);
+  });
+}
+if(progress){
+  progress.addEventListener('input', function(){
+    if(Number.isFinite(audio.duration) && audio.duration > 0){
+      audio.currentTime = Number(progress.value) / 1000 * audio.duration;
+      refreshProgress();
+    }
+  });
+}
+['timeupdate','loadedmetadata','durationchange','seeked'].forEach(function(event){
+  audio.addEventListener(event, refreshProgress);
+});
+audio.addEventListener('waiting', function(){
+  player.classList.add('is-loading');
+  statusText.textContent = '缓冲中…';
+});
+audio.addEventListener('playing', function(){
+  player.classList.remove('is-loading');
+  setPlayingUI(true);
+  statusText.textContent = '正在播放 · 关羽戏曲音频';
+});
+audio.addEventListener('play', function(){
+  setPlayingUI(true);
+  statusText.textContent = '正在播放 · 关羽戏曲音频';
+});
+audio.addEventListener('pause', function(){
+  player.classList.remove('is-loading');
+  setPlayingUI(false);
+  if(!audio.ended) statusText.textContent = '音乐已暂停';
+});
+audio.addEventListener('ended', function(){
+  player.classList.remove('is-playing','is-loading');
+  if(progress){
+    progress.value = 0;
+    progress.style.setProperty('--played','0%');
   }
+  statusText.textContent = '播放结束 · 感谢聆听';
 });
-['timeupdate','loadedmetadata','durationchange','seeked'].forEach(event=>audio.addEventListener(event,refreshProgress));
-audio.addEventListener('play',()=>{
-  player.classList.add('is-playing');
-  playPause.setAttribute('aria-label','暂停音乐');
-  statusText.textContent='正在播放 · 关羽戏曲音频';
-});
-audio.addEventListener('pause',()=>{
-  player.classList.remove('is-playing');
-  playPause.setAttribute('aria-label','播放音乐');
-  statusText.textContent='音乐已暂停';
-});
-audio.addEventListener('ended',()=>{
-  player.classList.remove('is-playing');
-  progress.value=0;
-  progress.style.setProperty('--played','0%');
-  statusText.textContent='播放结束 · 感谢聆听';
-});
-audio.addEventListener('error',()=>{
-  statusText.textContent='音频加载失败，请检查 MP3 文件是否存在';
+audio.addEventListener('error', function(){
+  player.classList.remove('is-loading');
+  statusText.textContent = '音频加载失败，请检查 MP3 文件是否存在';
   errorText.classList.add('show');
 });
+bindTap(playPause, toggleMusic);
+bindTap(seekPrev, function(e){ e.preventDefault(); seekMusic(-10); });
+bindTap(seekNext, function(e){ e.preventDefault(); seekMusic(10); });
 if(location.hash === '#guanyu') showDetail();
-window.addEventListener('hashchange',()=>{
-  if(location.hash==='#guanyu') showDetail();
+window.addEventListener('hashchange', function(){
+  if(location.hash === '#guanyu') showDetail();
   else showHome();
 });
 </script>
